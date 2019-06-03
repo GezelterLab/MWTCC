@@ -1,0 +1,52 @@
+N,epoch,Latitutde,Longitude,Location
+1,-87505200,41.7894268,-87.5977417,University of Chicago
+2,-48974400,43.0753746,-89.3921879,University of Wisconsin at Madison
+3,-16920000,44.9753541,-93.2330739,University of Minnesota
+4,26715600,42.0279081,-93.644582,Iowa State University
+5,54532800,39.165325,-86.5263857,Indiana University at Bloomington
+6,90824400,42.7033214,-84.4843604,Michigan State University
+7,137822400,37.8640076,-84.6602447,University of Kentucky at Lexington
+8,168235200,43.0753746,-89.3921879,University of Wisconsin at Madison
+9,201499200,41.9374092,-88.7728748,Northern Illinois University
+10,233553600,41.7105866,-87.9831154,Argonne National Laboratory
+11,264398400,39.990101,-83.020581,505 King Ave Columbus OH 43201
+12,294638400,40.4167213,-86.9304746,Purdue University
+13,326692800,44.9753541,-93.2330739,University of Minnesota
+14,358056000,41.7894268,-87.5977417,University of Chicago
+15,388987200,42.7033214,-84.4843604,Michigan State University
+16,422251200,41.8955084,-87.6187922,Northwestern University
+17,453787200,37.7079427,-89.225325,Southern Illinois University
+18,485150400,43.0384667,-87.9298034,Marquette University
+19,516600000,39.165325,-86.5263857,Indiana University at Bloomington
+20,548049600,40.4441411,-79.9590032,University of Pittsburgh
+21,579499200,41.7105866,-87.9831154,Argonne National Laboratory
+22,610948800,39.7739776,-86.177187,Indiana University Purdue University Indianapolis
+23,643003200,43.0753746,-89.3921879,University of Wisconsin at Madison
+24,674452800,41.9374092,-88.7728748,Northern Illinois University
+25,707716800,42.7033214,-84.4843604,Michigan State University
+26,737956800,37.7079427,-89.225325,Southern Illinois University
+27,769406400,38.9384785,-92.3270926,University of Missouri at Columbia
+28,800251200,41.8955084,-87.6187922,Northwestern University
+29,833515200,39.7739776,-86.177187,Indiana University Purdue University Indianapolis
+30,864360000,40.0985023,-88.2290783,University of Illinois at Urbana-Champaign
+31,895809600,40.4167213,-86.9304746,Purdue University
+32,927259200,41.7043332,-86.2412543,University of Notre Dame
+33,959313600,41.6629213,-91.5620347,University of Iowa
+34,1002254400,44.9753541,-93.2330739,University of Minnesota
+35,1055476800,42.0279081,-93.644582,Iowa State University
+36,1087531200,42.7033214,-84.4843604,Michigan State University
+37,1118980800,38.9384785,-92.3270926,University of Missouri at Columbia
+38,1150430400,40.0747509,-83.0746103,Ohio State University
+39,1183089600,39.165325,-86.5263857,Indiana University at Bloomington
+40,1214539200,42.2783714,-83.7371794,University of Michigan
+41,1243569600,37.7079427,-89.225325,Southern Illinois University
+42,1274414400,40.4167213,-86.9304746,Purdue University
+43,1307678400,41.7043332,-86.2412543,University of Notre Dame
+44,1339070400,43.0753746,-89.3921879,University of Wisconsin at Madison
+45,1369828800,40.0985023,-88.2290783,University of Illinois at Urbana-Champaign
+46,1402833600,41.8955084,-87.6187922,Northwestern University
+47,1435320000,42.2783714,-83.7371794,University of Michigan
+48,1465473600,40.4441411,-79.9590032,University of Pittsburgh
+49,1496318400,42.7033214,-84.4843604,Michigan State University
+50,1529582400,41.7894268,-87.5977417,University of Chicago
+51,1559822400,41.7043332,-86.2412543,University of Notre Dame

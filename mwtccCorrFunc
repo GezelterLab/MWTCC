@@ -1,0 +1,190 @@
+#!/usr/bin/env python
+"""Midwest Theory Conference analysis program
+
+Takes the raw location data for previous Midwest Theoretical Chemistry
+Conferences and computes interesting (but probably meaningless) statistics
+about the conference.
+
+
+Usage: mwtccCorrFunc
+
+Options:
+  -h,  --help             show this help
+  -t,  --traj=...         use specified conference trajectory file
+
+Example:
+  mwtccCorrFunc -t mwtcc.traj
+
+"""
+
+__author__ = "Dan Gezelter (gezelter@nd.edu)"
+__copyright__ = "Copyright (c) 2011,2019 by the University of Notre Dame"
+__license__ = "GPL"
+
+import sys
+import getopt
+import string
+import math
+
+indices = []
+dates = []
+latitudes = []
+longitudes = []
+altitudes = []
+pos = []
+
+def usage():
+    print(__doc__)
+
+def readFile(trajFileName):
+    trajFile = open(trajFileName, 'r')        
+    line = trajFile.readline()
+    while 1:
+        L = line.split()
+        indices.append(int(L[0]))
+        dates.append(int(L[1]))
+        latitudes.append(float(L[2]))
+        longitudes.append(float(L[3]))
+        altitudes.append(0.0)
+        line = trajFile.readline()
+        if not line: break
+
+def convertLatLong():
+    dtr = math.pi / 180.0
+    rn  = 6378.137    # equatorial radius of the earth in km
+    f = 1.0/298.257223563  # flattening of the earth
+    b = rn * (1.0 - f)
+    esq    = 1 - b*b / (rn * rn)  # eccentricity squared
+    for i in range(len(indices)):
+        clat = math.cos(dtr * latitudes[i])
+        slat = math.sin(dtr * latitudes[i])
+        clon = math.cos(dtr * longitudes[i])
+        slon = math.sin(dtr * longitudes[i])
+        altkm = altitudes[i]
+        x      =  (rn + altkm) * clat * clon;
+        y      =  (rn + altkm) * clat * slon;
+        z      =  ( (1-esq)*rn + altkm ) * slat;
+        pos.append([x, y, z])
+
+def doMSD():
+    dt = (dates[len(dates)-1] - dates[0]) / len(dates)
+    
+    msd = []
+    msd2 = []
+    counts = []
+    for j in range(len(indices)):
+        msd.append(0.0)
+        msd2.append(0.0)
+        counts.append(0.0)
+        for i in range(len(indices) - j):
+            dx = pos[i+j][0] - pos[i][0]
+            dy = pos[i+j][1] - pos[i][1]
+            dz = pos[i+j][2] - pos[i][2]
+            dr2 = dx*dx + dy*dy + dz*dz
+            msd[j] = msd[j] + dr2
+            msd2[j] = msd2[j] + dr2*dr2
+            counts[j] = counts[j] + 1
+        msd[j] = msd[j] / counts[j]
+        msd2[j] = msd2[j] / counts[j]
+        variance = msd2[j] - msd[j]*msd[j]
+        sd = math.sqrt(variance)
+        confidenceInt = 1.960 * sd / math.sqrt(counts[j])
+        # convert time intervals to years, and distances to square miles
+        print(("%f\t%f\t%f") % (j*dt / 31536000, msd[j] * 0.386102159, confidenceInt * 0.386102159))
+
+def findCentroid():
+    latSum = 0.0
+    longSum = 0.0
+    count = 0
+    for j in range(len(indices)):
+        latSum = latSum + latitudes[j]
+        longSum = longSum + longitudes[j]
+        count = count + 1
+    print("Centroid lat = %f, long = %f" % (latSum/float(count), longSum/float(count)))
+
+
+def findSigmas():
+    posSum = [0.0, 0.0, 0.0]
+    pos2Sum = [0.0, 0.0, 0.0]
+    sigma_x = [0.0, 0.0, 0.0]
+    sigma_v = [0.0, 0.0, 0.0]
+    count = 0
+    for j in range(len(pos)):
+        for i in range(3):
+            posSum[i] = posSum[i] + pos[j][i]
+            pos2Sum[i] = pos2Sum[i] + pos[j][i] * pos[j][i]
+        count = count + 1
+
+    for i in range(3):
+        posSum[i] = posSum[i] / float(count)
+        pos2Sum[i] = pos2Sum[i] / float(count)
+
+    for i in range(3):
+        sigma_x[i] =  math.sqrt(pos2Sum[i] - posSum[i] * posSum[i])
+        print("sigma_r %d = %f km" % (i, sigma_x[i]))
+
+    vels = []
+    for j in range(len(pos)-1):
+        vel = [0.0, 0.0, 0.0]
+        for i in range(3):
+            vel[i] = (pos[j+1][i] - pos[j][i]) / float(dates[j+1] - dates[j])
+        vels.append(vel)
+
+    velSum = [0.0, 0.0, 0.0]
+    vel2Sum = [0.0, 0.0, 0.0]
+    count = 0
+    for j in range(len(vels)):
+        for i in range(3):
+            velSum[i] = velSum[i] + vels[j][i]
+            vel2Sum[i] = vel2Sum[i] + vels[j][i] * vels[j][i]
+        count = count + 1
+
+    for i in range(3):
+        velSum[i] = velSum[i] / float(count)
+        vel2Sum[i] = vel2Sum[i] / float(count)
+
+    for i in range(3):
+        sigma_v[i] =  math.sqrt(vel2Sum[i] - velSum[i] * velSum[i])
+        print("sigma_v %d = %g km/s" % (i, sigma_v[i]))
+
+    # now for the mass of the conference:
+    for i in range(3):
+        m = 6.626068e-34 / (2.0 * sigma_x[i] * 1000.0 * sigma_v[i] * 1000.0)
+        print("mass (kg) = %20.13e" % m)
+
+
+
+def main(argv):
+    _haveTrajFileName = 0
+    try:                                
+        opts, args = getopt.getopt(argv, "ht:", ["help", "traj="]) 
+    except getopt.GetoptError:
+        usage()                          
+        sys.exit(2)                     
+    for opt, arg in opts:                
+        if opt in ("-h", "--help"):      
+            usage()                     
+            sys.exit()                  
+        elif opt in ("-t", "--traj"): 
+            trajFileName = arg
+            _haveTrajFileName = 1
+
+    if (_haveTrajFileName != 1):
+        usage() 
+        print("No trajectory file was specified")
+        sys.exit()
+
+    readFile(trajFileName)
+    convertLatLong()
+    findCentroid()
+    findSigmas()
+    doMSD()
+
+
+
+if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        usage()
+        sys.exit()
+    main(sys.argv[1:])
+
